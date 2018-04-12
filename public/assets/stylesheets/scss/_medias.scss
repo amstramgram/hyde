@@ -1,0 +1,36 @@
+//main: master.scss
+
+@media (max-width: 320px + 380px - 1px ) {
+	.navigation-mobile{
+		display: flex;
+	}
+	.navigation-container{
+		transform: translateX(-320px);
+	}
+	.main-container{
+		width: 100%;
+		transform: translateX(-320px);
+	}
+}
+
+@media (min-width: 420px ) {
+	.grid{
+		> div{
+			width: calc(( 100% / 2 ) - 1rem);
+		}
+	}
+}
+
+@for $i from 1 through 15 {
+	@media (min-width: 316px * $i + 64px + 320px ) {
+		.container{
+			width: 316px * $i;
+		}
+		.grid{
+			width: 316px * $i;
+			> div{
+				width: calc(( 100% / #{$i} ) - 1rem);
+			}
+		}
+	}
+}

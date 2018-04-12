@@ -1,0 +1,113 @@
+//main: master.scss
+
+html ::selection {
+    background: $color-yellow;
+}
+
+html ::-moz-selection {
+    background: $color-yellow;
+}
+
+img{
+	display: block;
+	max-width: 100%;
+	height: auto;
+}
+
+strong{font-weight: 700;}
+
+h1,h2,h3,h4,h5,h6{
+	margin-bottom: 1em;
+	color: $text-color;
+}
+
+h1{
+	font-family: $font-title;
+	font-size: 2.5rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	margin-bottom: 2rem;
+  margin-top: 2.5rem;
+}
+h2{
+	font-size: 1.5rem;
+	line-height: 1.25em;
+	font-family: $font-excerpt;
+	color: rgba($text-color, .5);
+}
+
+h3{
+	font-family: $font-title;
+	font-size: 1.5rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	margin-bottom: 2rem;
+  margin-top: 2.5rem;
+}
+
+p{
+	font-family: $font-text;
+	color: $text-color;
+	font-size: 1.125em;
+  line-height: 2.375rem;
+	margin: 0 0 2rem 0;
+	a{
+		color: $color-red;
+		border-bottom: 1px solid $color-red;
+		line-height: 1.65em;
+		&:before{
+			content: '\E157';
+			display: inline-block;
+			font-family: 'Material Icons';
+			margin-right: .5rem;
+			vertical-align: -3px;
+		}
+	}
+}
+
+button{
+	display: flex;
+	border: 0;
+	border-radius: 4px;
+	background: none;
+	padding: 0;
+	margin: 0;
+	height: 32px;
+	transition: border .25s;
+	&.menu{
+		min-width: 32px;
+		justify-content: center;
+		border: 1px solid transparent;
+		color: $color-purple;
+		padding: 0 4px;
+		transition: color .35s;
+		&:hover{
+			color: rgba($color-purple, $color-opacity);
+		}
+	}
+}
+
+.hidden{display: none!important;}
+.background-image{
+	background-size: cover;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+/*flex*/
+.flex,
+.flex-col,
+.flex-row,
+.flex-center,
+.flex-wrap,
+.flex-middle{display: flex;}
+.flex-col{flex-direction: column;}
+.flex-row{flex-direction: row;}
+.flex-auto{flex: 1 1 auto;}
+.flex-middle{align-items: center;}
+.flex-center{justify-content: center;}
+.flex-top{margin-top: auto;}
+.flex-right{margin-right: auto;}
+.flex-bottom{margin-bottom: auto;}
+.flex-left{margin-left: auto;}
+.flex-wrap{flex-wrap: wrap;}
