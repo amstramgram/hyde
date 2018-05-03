@@ -10,7 +10,7 @@
 	"require": {
 		"slim/slim": "^3.8",
 		"webuni/front-matter": "^1.0",
-		"cebe/markdown": "^1.1",
+		"cebe/markdown": "~1.2.0",
 		"slim/php-view": "^2.2",
 		"gumlet/php-image-resize": "^1.7",
 		"fzaninotto/faker": "^1.7"
