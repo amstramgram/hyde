@@ -37,13 +37,13 @@ class Page {
 
 			$document = $this->parseFrontMatter($this->path);
 
-			$this->content = $this->parseMarkdown($document);
 			$this->datas = $document->getData();
 			$this->title = $this->datas['title'];
 			$this->layout = $this->datas['layout'];
 			$this->baseName = str_replace([POSTS_PATH, '/', '.md'], '', $this->path);
-
 			$this->process();
+
+			$this->content = $this->parseMarkdown($document);
 
 			return true;
 		}
@@ -52,8 +52,32 @@ class Page {
 	}
 
 	public function parseMarkdown($document){
+		$parsed_doc = $document->getContent();
+
+		preg_match_all('/!\[.*\]\(.*\)/', $document->getContent(), $matches);
+
+		if( !empty($matches[0]) ){
+
+			foreach($matches[0] as $match){
+				$explode = explode('(', $match);
+				$explode = explode(' ', $explode[1]);
+
+				$name = str_replace(')','', $explode[0]);
+
+				$key = array_search($name, array_column($this->images, 'name'));
+
+				if( $key !== false ){
+					$url = $this->images[$key]->sizes->large;
+					$new = str_replace($name, $url, $match);
+
+					$parsed_doc = str_replace($match, $new, $parsed_doc);
+				}
+
+			}
+		}
+
 		$parser = new GithubMarkdown();
-		$content = $parser->parse($document->getContent());
+		$content = $parser->parse($parsed_doc);
 
 		return $content;
 	}
@@ -74,7 +98,8 @@ class Page {
 			$image = [
 				'url' => $this->parseUri($image),
 				'sizes' => [
-					'thumbnail' => $this->resize($image, 480, 480)
+					'thumbnail' => $this->resize($image, 480, 480),
+					'large' => $this->resize($image, 1200, 9999, "large")
 				],
 				'name' => $this->parseName($image)
 			];
@@ -82,9 +107,21 @@ class Page {
 		}
 	}
 
-	public function resize($image, $w, $h) {
+	public function resize($image, $w = null, $h = null, $folder = "thumbs") {
 		$pathinfo = pathinfo($image);
-		$thumbsPath = UPLOADS_PATH.'/'.$this->baseName.'/thumbs/';
+		$thumbsPath = UPLOADS_PATH.'/'.$this->baseName.'/'.$folder.'/';
+
+		if($w === 9999 || $h === 9999){
+			$size = getimagesize($image);
+
+			if($w === 9999){
+				$w = intval( ($h * $size[0]) / $size[1] );
+			}
+			if($h === 9999){
+				$h = intval( ($size[1] * $w) / $size[0] );
+			}
+		}
+
 		$newPathImage = $thumbsPath.$pathinfo['filename'].'-'.$w.'x'.$h.'.'.$pathinfo['extension'];
 
 		if(!is_dir($thumbsPath)){
@@ -104,7 +141,7 @@ class Page {
 	}
 
 	public function parseName($path){
-		return str_replace('_', ' ', pathinfo($path)['filename']);
+		return str_replace('_', ' ', pathinfo($path)['filename'].".".pathinfo($path)['extension']);
 	}
 
 	public function getPosts() {

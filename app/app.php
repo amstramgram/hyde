@@ -22,7 +22,14 @@ define('DARFTS_PATH', CONTENT_PATH .'/drafts');
 define('POSTS_PATH', CONTENT_PATH .'/posts');
 define('UPLOADS_PATH', CONTENT_PATH .'/uploads');
 
-define('ROOT_URI', (isset($_SERVER['HTTPS']) ? "https" : "http").'://'.$_SERVER['SERVER_NAME']);
+if($_SERVER['SERVER_PORT'] != 80):
+	$port = ':'.$_SERVER["SERVER_PORT"];
+else:
+	$port = '';
+endif;
+
+define('ROOT_URI', (isset($_SERVER['HTTPS']) ? "https" : "http").'://'.$_SERVER['SERVER_NAME']. $port);
+
 
 // Instantiate the app
 $settings = [
