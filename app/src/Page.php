@@ -27,10 +27,10 @@ class Page {
 		$this->route = $c->request->getUri()->getPath();
 		$this->name = str_replace('/', '', $this->route);
 		$this->pages = $pages;
-		$this->parsed = $this->parse();
+		$this->parsed = $this->parsePage();
 	}
 
-	public function parse() {
+	public function parsePage() {
 		$this->files = glob(CONTENT_PATH .'/posts/2*-'.$this->name.'.md', GLOB_BRACE);
 		if(!empty($this->files)){
 			$this->path = reset($this->files);
@@ -54,14 +54,14 @@ class Page {
 	public function parseMarkdown($document){
 		$parsed_doc = $document->getContent();
 
-		preg_match_all('/!\[.*\]\(.*\)/', $document->getContent(), $matches);
+		preg_match_all('/!\[.*\]\(.*\)/', $document->getContent(), $matches_i);
+		preg_match_all('/!g\[.*\]\(.*\)/', $document->getContent(), $matches_g);
 
-		if( !empty($matches[0]) ){
+		if( !empty($matches_i[0]) ){
 
-			foreach($matches[0] as $match){
+			foreach($matches_i[0] as $match){
 				$explode = explode('(', $match);
 				$explode = explode(' ', $explode[1]);
-
 				$name = str_replace(')','', $explode[0]);
 
 				$key = array_search($name, array_column($this->images, 'name'));
@@ -76,8 +76,39 @@ class Page {
 			}
 		}
 
+		if( !empty($matches_g[0]) ){
+			$this->urls = [];
+			foreach($matches_g[0] as $match){
+
+				$explode = explode('(', $match);
+				$explode = explode(' "', $explode[1]);
+
+				$list_name = str_replace(')','', $explode[0]);
+				$list_title = str_replace('")','', $explode[1]);
+				$names = explode('|', $list_name);
+				$titles = explode('|', $list_title);
+
+				foreach($names as $i => $name){
+					$key = array_search($name, array_column($this->images, 'name'));
+
+					if( $key !== false ){
+						$url = $this->images[$key]->sizes->large;
+						$this->gallery[] = ["src" => $url, "title" => $titles[$i]];
+					}
+				}
+			}
+
+			$parsed_doc = str_replace("[](".$list_name." \"".$list_title."\")", "", $parsed_doc);
+		}
+
 		$parser = new GithubMarkdown();
 		$content = $parser->parse($parsed_doc);
+
+		preg_match_all('/!g/', $content, $matches_in);
+
+		if( !empty($matches_in[0]) ){
+			$content = str_replace("!g", $this->parseGallery(), $content);
+		}
 
 		return $content;
 	}
@@ -170,6 +201,20 @@ class Page {
 		}
 
 		return $posts;
+	}
+
+	private function parseGallery(){
+		$html = '<div class="gallery-wrapper">';
+			$html .= '<div class="inner-gallery">';
+				foreach($this->gallery as $item){
+					$html .= '<figure>';
+						$html .= '<img src="'.$item['src'].'" title="'.$item['title'].'">';
+					$html .= '</figure>';
+				}
+			$html .= '</div>';
+		$html .= '</div>';
+
+		return $html;
 	}
 
 	public function getFiles() {
