@@ -12,7 +12,13 @@
 
 		this.$element = element
 
-		this.initialize();
+		if( this.$element.tagName == "SCRIPT" ){
+			this.initModalGallery()
+		}
+		if( this.$element.tagName == "DIV" ){
+			this.initInlineGallery()
+		}
+
 	}
 
 	$.Caroubou.defaults = {
@@ -26,11 +32,35 @@
 		'slidesClass' : 'slides',
 		'slidesWrapperClass' : 'slides-wrapper',
 		'itemClass' : 'item',
+		'galleryClass' : 'gallery',
 		'loadingClass' : 'loading'
 	}
 
 	$.Caroubou.prototype = {
-		initialize : function() {
+		initInlineGallery: function() {
+			console.log("HELLO")
+
+			$items = $(this.$element).find('figure')
+			this.options.count = $items.length
+
+			itemClass = this.options.itemClass
+			$items.each(function(i){
+				$(this).addClass(itemClass)
+				if(i === 0){
+					$(this).addClass("current")
+				}
+
+				$(this).attr('data-index', i)
+			})
+
+			this.buttons()
+			this.events()
+
+			$(this.$element).addClass(this.options.galleryClass)
+			this.$element.append(this.$controlPrev[0], this.$controlNext[0])
+		},
+		initModalGallery : function() {
+
 			// get les datas
 			this._datas = JSON.parse($.trim(this.$element.innerHTML.replace(/[\t\n]+/g, '')))
 			this.options.count = this._datas.length - 1
@@ -39,7 +69,7 @@
 			this.events()
 
 			// create la modal
-			this.$modal = $('<div id="'+ this.options.containerID +'" class="'+ this.options.containerClass +' '+ this.options.modalClass +'" />')
+			this.$modal = $('<div id="'+ this.options.containerID +'" class="'+ this.options.containerClass +' '+ this.options.modalClass +' '+ this.options.galleryClass +'" />')
 
 			// add buttons to modal
 			this.$modal.append(this.$controlClose, this.$controlPrev, this.$controlNext)
@@ -202,7 +232,7 @@
 			}else{
 				type = event.type
 			}
-console.log(type);
+
 			return type
 		},
 		indexes : function(event) {

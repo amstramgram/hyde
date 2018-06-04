@@ -15,5 +15,6 @@
 	})
 
 	$('#caroubou-datas').Caroubou()
+	$('.gallery-wrapper').Caroubou()
 
 })(jQuery)
