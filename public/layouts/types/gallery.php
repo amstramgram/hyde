@@ -1,5 +1,5 @@
 <?php if($content):?>
-	<div class="container post">
+	<div class="container head">
 		<?php echo $content;?>
 	</div>
 <?php endif;?>
