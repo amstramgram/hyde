@@ -204,13 +204,15 @@ class Page {
 	}
 
 	private function parseGallery(){
-		$html = '<div class="gallery-wrapper">';
-			$html .= '<div class="inner-gallery">';
-				foreach($this->gallery as $item){
-					$html .= '<figure>';
-						$html .= '<img src="'.$item['src'].'" title="'.$item['title'].'">';
-					$html .= '</figure>';
-				}
+		$html = '<div class="gallery">';
+			$html .= '<div class="slides-wrapper">';
+				$html .= '<div class="slides">';
+					foreach($this->gallery as $index => $item){
+						$html .= '<figure>';
+							$html .= '<img src="'.$item['src'].'" title="'.$item['title'].'">';
+						$html .= '</figure>';
+					}
+				$html .= '</div>';
 			$html .= '</div>';
 		$html .= '</div>';
 
