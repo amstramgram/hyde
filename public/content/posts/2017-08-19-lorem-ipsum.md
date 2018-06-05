@@ -16,7 +16,7 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
 ![](raluca-georgescu-478197-unsplash.jpg)
 
 
-!g[](matthew-feeney-642809-unsplash.jpg|dmitriy-ilkevich-441481-unsplash.jpg|micheile-henderson-597875-unsplash.jpg|jake-campbell-72844-unsplash.jpg "Alt Text|Title 4|Alt text2|Alt Test3")
+!g(matthew-feeney-642809-unsplash.jpg|dmitriy-ilkevich-441481-unsplash.jpg|micheile-henderson-597875-unsplash.jpg|jake-campbell-72844-unsplash.jpg "Alt Text|Title 4|Alt text2|Alt Test3")
 
 ### Title h3
 
@@ -26,4 +26,4 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
 
 [liens](http://google.com)
 
-!g[](micheile-henderson-597875-unsplash.jpg|jake-campbell-72844-unsplash.jpg|matthew-feeney-642809-unsplash.jpg|dmitriy-ilkevich-441481-unsplash.jpg "Alt Text|Title 4|Alt text2|Alt Test3")
+!g(micheile-henderson-597875-unsplash.jpg|jake-campbell-72844-unsplash.jpg|matthew-feeney-642809-unsplash.jpg|dmitriy-ilkevich-441481-unsplash.jpg "Alt Text|Title 4|Alt text2|Alt Test3")
