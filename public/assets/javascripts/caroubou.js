@@ -11,76 +11,67 @@
 		this._datas = null
 
 		this.$element = element
+		this._type = this.$element.tagName
 
-		if( this.$element.tagName == "SCRIPT" ){
-			this.initModalGallery()
-		}
-		if( this.$element.tagName == "DIV" ){
-			this.initInlineGallery()
-		}
-
+		this.initialize();
 	}
 
 	$.Caroubou.defaults = {
 		'count' : 0,
 		'selectorClass' : '.item.image',
 		'modalContainer' : '.modal-container',
-		'modalClass' : 'modal',
+		'modalClass' : 'modal gallery',
 		'modalClassActive' : 'modal-active',
 		'containerID' : 'lightbox',
 		'containerClass' : 'modal-lightbox',
 		'slidesClass' : 'slides',
 		'slidesWrapperClass' : 'slides-wrapper',
 		'itemClass' : 'item',
-		'galleryClass' : 'gallery',
 		'loadingClass' : 'loading'
 	}
 
 	$.Caroubou.prototype = {
-		initInlineGallery: function() {
-			console.log("HELLO")
+		initialize : function() {
 
-			$items = $(this.$element).find('figure')
-			this.options.count = $items.length
 
-			itemClass = this.options.itemClass
-			$items.each(function(i){
-				$(this).addClass(itemClass)
-				if(i === 0){
-					$(this).addClass("current")
-				}
-
-				$(this).attr('data-index', i)
-			})
-
-			this.buttons()
-			this.events()
-
-			$(this.$element).addClass(this.options.galleryClass)
-			this.$element.append(this.$controlPrev[0], this.$controlNext[0])
-		},
-		initModalGallery : function() {
-
-			// get les datas
-			this._datas = JSON.parse($.trim(this.$element.innerHTML.replace(/[\t\n]+/g, '')))
-			this.options.count = this._datas.length - 1
+			if( this._type == "SCRIPT" ){
+				// get les datas
+				this._datas = JSON.parse($.trim(this.$element.innerHTML.replace(/[\t\n]+/g, '')))
+				this.options.count = this._datas.length - 1
+			}else{
+				this.options.containerID = "gallery-"+Math.random().toString(36).substr(2)
+				$(this.$element).attr('ID', this.options.containerID)
+				$figures = $("#"+this.options.containerID).find('figure')
+				$figures.each(function(index){
+					$(this).addClass('item').attr("data-index", index)
+					if(index == 0){
+						$(this).addClass('current')
+					}
+				})
+				this.options.count = $figures.length - 1
+			}
 
 			this.buttons()
 			this.events()
 
-			// create la modal
-			this.$modal = $('<div id="'+ this.options.containerID +'" class="'+ this.options.containerClass +' '+ this.options.modalClass +' '+ this.options.galleryClass +'" />')
+			if( this._type == "SCRIPT" ){
+				// create la modal
+				this.$modal = $('<div id="'+ this.options.containerID +'" class="'+ this.options.containerClass +' '+ this.options.modalClass +'" />')
 
-			// add buttons to modal
-			this.$modal.append(this.$controlClose, this.$controlPrev, this.$controlNext)
+				// add buttons to modal
+				this.$modal.append(this.$controlClose, this.$controlPrev, this.$controlNext)
 
-			// create wrapperSlides
-			$wrapperSlides = $('<div class="'+ this.options.slidesWrapperClass +'">')
-			this.$modal.append($wrapperSlides)
-			// create slides
-			this.$slides = $('<div class="'+ this.options.slidesClass +'">')
-			// append slides in modal
-			this.$modal.find('.'+this.options.slidesWrapperClass).append(this.$slides)
+				// create wrapperSlides
+				$wrapperSlides = $('<div class="'+ this.options.slidesWrapperClass +'">')
+				this.$modal.append($wrapperSlides)
+				// create slides
+				this.$slides = $('<div class="'+ this.options.slidesClass +'">')
+				// append slides in modal
+				this.$modal.find('.'+this.options.slidesWrapperClass).append(this.$slides)
+			}else{
+				$("#"+this.options.containerID).append(this.$controlPrev, this.$controlNext)
+				$('#'+this.options.containerID).find('.control.previous').addClass('hidden')
+			}
 		},
 		construct : function() {
 			if(!$('#'+this.options.containerID).length){
@@ -108,8 +99,8 @@
 			oldCurrent = $('#'+this.options.containerID+' .'+this.options.slidesClass).find('.'+this.options.itemClass+'.current').index()
 
 			if(this._current >= 0){
-				if(oldCurrent == 1){
-					$item = $('<img src="'+_this._datas[this._current].url+'">').wrap('<div data-index="'+this._current+'" class="'+ _this.options.itemClass +'">')
+				if(oldCurrent == 1 && this._type == "SCRIPT"){
+					$item = $('<img src="'+_this._datas[this._current].url+'">').wrap('<figure data-index="'+this._current+'" class="'+ _this.options.itemClass +'">')
 					$('#'+this.options.containerID+' .'+this.options.slidesClass).prepend($item.parent())
 				}
 			}else{
@@ -127,6 +118,7 @@
 
 		},
 		next : function() {
+
 			// append
 			oldIndex = $('#'+this.options.containerID+' .'+this.options.slidesClass).find('.'+this.options.itemClass+'.current').data('index') + 1
 
@@ -136,8 +128,8 @@
 			countItem = $('#'+this.options.containerID+' .'+this.options.slidesClass).find('.'+this.options.itemClass).length
 
 			if(this._current <= this.options.count){
-				if((countItem - oldCurrent) == 1){
-					$item = $('<img src="'+_this._datas[this._current].url+'">').wrap('<div data-index="'+this._current+'" class="'+ _this.options.itemClass +'">')
+				if((countItem - oldCurrent) == 1 && this._type == "SCRIPT"){
+					$item = $('<img src="'+_this._datas[this._current].url+'">').wrap('<figure data-index="'+this._current+'" class="'+ _this.options.itemClass +'">')
 					$('#'+this.options.containerID+' .'+this.options.slidesClass).append($item.parent())
 				}
 			}else{
@@ -145,6 +137,9 @@
 			}
 
 			indexCurrent = $('#'+this.options.containerID+' .'+this.options.slidesClass).find('.'+this.options.itemClass+'.current').index() + 1
+
+			console.log(indexCurrent)
+			console.log(this.options.count)
 
 			if(indexCurrent <= this.options.count){
 				$('#'+this.options.containerID+' .'+this.options.slidesClass).find('.'+this.options.itemClass).removeClass('current')
@@ -158,8 +153,8 @@
 			this.slide()
 
 			$('#'+this.options.containerID)
-				.find('.'+this.options.slidesWrapperClass)
-					.append(this.$slides)
+			.find('.'+this.options.slidesWrapperClass)
+			.append(this.$slides)
 
 			this.translate()
 		},
@@ -167,13 +162,18 @@
 			_this = this
 			$.each(this._indexes, function(i, item){
 				current = (item == _this._current)? 'current' : ''
-				$item = $('<img src="'+_this._datas[item].url+'">').wrap('<div data-index="'+item+'" class="'+ _this.options.itemClass +' '+ current +'">')
+				$item = $('<img src="'+_this._datas[item].url+'">').wrap('<figure data-index="'+item+'" class="'+ _this.options.itemClass +' '+ current +'">')
 				_this.$slides.append($item.parent())
 			})
 		},
 		translate : function() {
+			console.log("-- translate --")
 			index = $('#'+this.options.containerID+' .'+this.options.slidesClass).find('.'+this.options.itemClass+'.current').index()
-			$('#'+this.options.containerID).find('.'+this.options.slidesClass).css({'transform':'translateX( '+(-95 * index)+'vw )'})
+			translate = ( this._type == "SCRIPT" )? (-95 * index)+"vw" : (-100 * index)+"%";
+
+			console.log(translate)
+
+			$('#'+this.options.containerID).find('.'+this.options.slidesClass).css({'transform':'translateX( '+translate+' )'})
 		},
 		events : function() {
 			var self = this
@@ -192,19 +192,19 @@
 
 			switch (action) {
 				case 'click':
-					this.indexes(event)
-					this.construct()
+				this.indexes(event)
+				this.construct()
 				break;
 				case 'close':
-					this.deconstruct()
+				this.deconstruct()
 				break;
 				case 'previous':
-					$('#'+this.options.containerID).find('.control.previous, .control.next').removeClass('hidden')
-					this.previous()
+				$('#'+this.options.containerID).find('.control.previous, .control.next').removeClass('hidden')
+				this.previous()
 				break;
 				case 'next':
-					$('#'+this.options.containerID).find('.control.previous, .control.next').removeClass('hidden')
-					this.next()
+				$('#'+this.options.containerID).find('.control.previous, .control.next').removeClass('hidden')
+				this.next()
 				break;
 			}
 		},
@@ -215,14 +215,14 @@
 					console.log(event.keyCode)
 					switch (event.keyCode) {
 						case 27:
-							type = "close"
+						type = "close"
 						break;
 						case 37:
-							type = "previous"
+						type = "previous"
 						break;
 						case 32:
 						case 39:
-							type = "next"
+						type = "next"
 						break;
 					}
 				}else{
@@ -259,8 +259,8 @@
 		buttons : function() {
 			console.log('-- buttons --')
 			this.$controlClose = $('<div class="control close"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0" y="0" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" fill="#FFF"><circle class="icon-bg" cx="50" cy="50" r="47.5"></circle><polygon class="icon-close" points="64.5,39.8 60.2,35.5 50,45.7 39.8,35.5 35.5,39.8 45.7,50 35.5,60.2 39.8,64.5 50,54.3 60.2,64.5 64.5,60.2 54.3,50"></polygon></svg></div>')
-			this.$controlPrev = $('<div class="control previous"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0" y="0" width="60" height="60" viewBox="0 0 60 60" xml:space="preserve" fill="#FFF"><circle class="icon-bg" cx="30" cy="30" r="30"></circle><path class="icon-arrow" d="M36.8,36.4L30.3,30l6.5-6.4l-3.5-3.4l-10,9.8l10,9.8L36.8,36.4z"></path></svg></div>')
-			this.$controlNext = $('<div class="control next"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0" y="0" width="60" height="60" viewBox="0 0 60 60" xml:space="preserve" fill="#FFF"><circle class="icon-bg" cx="30" cy="30" r="30"></circle><path class="icon-arrow" d="M24.2,23.5l6.6,6.5l-6.6,6.5l3.6,3.5L37.8,30l-10.1-9.9L24.2,23.5z"></path></svg></div>')
+			this.$controlPrev = $('<div class="control previous"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0" y="0" viewBox="0 0 60 60" xml:space="preserve" fill="#FFF"><circle class="icon-bg" cx="30" cy="30" r="30"></circle><path class="icon-arrow" d="M36.8,36.4L30.3,30l6.5-6.4l-3.5-3.4l-10,9.8l10,9.8L36.8,36.4z"></path></svg></div>')
+			this.$controlNext = $('<div class="control next"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0" y="0" viewBox="0 0 60 60" xml:space="preserve" fill="#FFF"><circle class="icon-bg" cx="30" cy="30" r="30"></circle><path class="icon-arrow" d="M24.2,23.5l6.6,6.5l-6.6,6.5l3.6,3.5L37.8,30l-10.1-9.9L24.2,23.5z"></path></svg></div>')
 		}
 	}
 
