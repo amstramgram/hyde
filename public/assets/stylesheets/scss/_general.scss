@@ -2,7 +2,8 @@
 
 .gallery{
 	position: relative;
-
+	display: flex;
+	align-items: center;
 	&.extras-hidden{
 		.extra{
 			opacity: 0;
@@ -11,9 +12,13 @@
 	}
 	.control{
 		position: absolute;
-		cursor: pointer;
 		z-index: 102;
+		width: 40px;
+		height: 40px;
+		cursor: pointer;
+
 		svg{
+			width: 100%;
 			transition: opacity .35s;
 			.icon-bg{
 				fill: #3d3d3d;
@@ -24,14 +29,8 @@
 				}
 			}
 		}
-		&.arrow{
-			width: 40px;
-			height: 40px;
-		}
 		&.close{
 			position: fixed;
-			width: 40px;
-			height: 40px;
 			top: 1rem;
 			right: 1rem;
 		}
@@ -48,19 +47,34 @@
 		}
 	}
 
-	&.gallery-wrapper{
-		display: flex;
-		max-width: 1200px;
-		margin: 0 auto 2rem;
-		align-items: center;
-		.inner-gallery{
-			display: flex;
-			align-items: center;
-			overflow: hidden;
-			.item{
-				display: flex;
-				flex: 100% 0 0;
+	&.modal{
+		.slides-wrapper{
+			width: 95vw;
+			height: 95vh;
+			.slides{
+				height: 95vh;
+				.item{
+					width: 95vw;
+					height: 95vh;
+					flex: none;
+				}
 			}
+		}
+	}
+
+	&:not(.modal){
+		height: 0;
+		width: 100%;
+		//padding-top: 56.25%;
+		padding-top: 66.66%;
+		.slides-wrapper{
+			position: absolute;
+			top: 0;
+			bottom: 0;
+		}
+		.control{
+			top: 50%;
+			transform: translateY(-50%);
 		}
 	}
 
@@ -68,23 +82,22 @@
 		display: flex;
 		align-items: center;
 		overflow: hidden;
-		width: 95vw;
-		height: 95vh;
 		.slides{
 			display: flex;
 			width: auto;
-			height: 95vh;
+			height: 100%;
+			transition: transform .35s;
 			.item{
 				display: flex;
 				justify-content: center;
 				align-items: center;
-				width: 95vw;
-				height: 95vh;
+				flex: 100% 0 0;
 				img{
 					max-width: 100%;
 					max-height: 100%;
 				}
 			}
 		}
+
 	}
 }
