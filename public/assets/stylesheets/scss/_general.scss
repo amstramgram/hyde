@@ -71,6 +71,9 @@
 			position: absolute;
 			top: 0;
 			bottom: 0;
+			.slides{
+				transition: transform .35s;
+			}
 		}
 		.control{
 			top: 50%;
@@ -86,7 +89,6 @@
 			display: flex;
 			width: auto;
 			height: 100%;
-			transition: transform .35s;
 			.item{
 				display: flex;
 				justify-content: center;

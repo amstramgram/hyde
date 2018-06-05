@@ -138,9 +138,6 @@
 
 			indexCurrent = $('#'+this.options.containerID+' .'+this.options.slidesClass).find('.'+this.options.itemClass+'.current').index() + 1
 
-			console.log(indexCurrent)
-			console.log(this.options.count)
-
 			if(indexCurrent <= this.options.count){
 				$('#'+this.options.containerID+' .'+this.options.slidesClass).find('.'+this.options.itemClass).removeClass('current')
 				$('#'+this.options.containerID+' .'+this.options.slidesClass).find('.'+this.options.itemClass).eq(indexCurrent).addClass('current')
@@ -149,7 +146,6 @@
 			this.translate()
 		},
 		slides : function () {
-			console.log('-- slides --')
 			this.slide()
 
 			$('#'+this.options.containerID)
@@ -167,11 +163,8 @@
 			})
 		},
 		translate : function() {
-			console.log("-- translate --")
 			index = $('#'+this.options.containerID+' .'+this.options.slidesClass).find('.'+this.options.itemClass+'.current').index()
 			translate = ( this._type == "SCRIPT" )? (-95 * index)+"vw" : (-100 * index)+"%";
-
-			console.log(translate)
 
 			$('#'+this.options.containerID).find('.'+this.options.slidesClass).css({'transform':'translateX( '+translate+' )'})
 		},
@@ -212,7 +205,6 @@
 			var type = ''
 			if(event.type == 'keydown'){
 				if($('body').hasClass(this.options.modalClassActive)){
-					console.log(event.keyCode)
 					switch (event.keyCode) {
 						case 27:
 						type = "close"
@@ -257,7 +249,6 @@
 			}
 		},
 		buttons : function() {
-			console.log('-- buttons --')
 			this.$controlClose = $('<div class="control close"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0" y="0" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" fill="#FFF"><circle class="icon-bg" cx="50" cy="50" r="47.5"></circle><polygon class="icon-close" points="64.5,39.8 60.2,35.5 50,45.7 39.8,35.5 35.5,39.8 45.7,50 35.5,60.2 39.8,64.5 50,54.3 60.2,64.5 64.5,60.2 54.3,50"></polygon></svg></div>')
 			this.$controlPrev = $('<div class="control previous"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0" y="0" viewBox="0 0 60 60" xml:space="preserve" fill="#FFF"><circle class="icon-bg" cx="30" cy="30" r="30"></circle><path class="icon-arrow" d="M36.8,36.4L30.3,30l6.5-6.4l-3.5-3.4l-10,9.8l10,9.8L36.8,36.4z"></path></svg></div>')
 			this.$controlNext = $('<div class="control next"><svg xmlns="http://www.w3.org/2000/svg" version="1.1" x="0" y="0" viewBox="0 0 60 60" xml:space="preserve" fill="#FFF"><circle class="icon-bg" cx="30" cy="30" r="30"></circle><path class="icon-arrow" d="M24.2,23.5l6.6,6.5l-6.6,6.5l3.6,3.5L37.8,30l-10.1-9.9L24.2,23.5z"></path></svg></div>')
