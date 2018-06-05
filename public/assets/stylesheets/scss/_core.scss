@@ -101,10 +101,22 @@ body{
 .container{
 	width: 100%;
 	align-self: center;
+
 	p{
 		img{
 			margin: 0 auto;
 		}
+	}
+
+	+ .grid{
+		margin-top: 2rem;
+		padding-bottom: 2rem;
+	}
+	&.head{
+		padding: 0 .5rem;
+	}
+	&.post{
+		padding: 0 .5rem 3rem;
 	}
 }
 
@@ -176,10 +188,6 @@ body{
 }
 
 .post{
-	padding: 0 .5rem;
-	+ .grid{
-		margin-top: 2rem;
-	}
 	&.not-found{
 		overflow: hidden;
 		width: 100%;
