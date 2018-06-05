@@ -55,10 +55,9 @@ class Page {
 		$parsed_doc = $document->getContent();
 
 		preg_match_all('/!\[.*\]\(.*\)/', $document->getContent(), $matches_i);
-		preg_match_all('/!g\[.*\]\(.*\)/', $document->getContent(), $matches_g);
+		preg_match_all('/!g\(.*\)/', $document->getContent(), $matches_g);
 
 		if( !empty($matches_i[0]) ){
-
 			foreach($matches_i[0] as $match){
 				$explode = explode('(', $match);
 				$explode = explode(' ', $explode[1]);
@@ -72,13 +71,11 @@ class Page {
 
 					$parsed_doc = str_replace($match, $new, $parsed_doc);
 				}
-
 			}
 		}
 
 		if( !empty($matches_g[0]) ){
-			$this->urls = [];
-			foreach($matches_g[0] as $match){
+			foreach($matches_g[0] as $index => $match){
 
 				$explode = explode('(', $match);
 				$explode = explode(' "', $explode[1]);
@@ -93,21 +90,31 @@ class Page {
 
 					if( $key !== false ){
 						$url = $this->images[$key]->sizes->large;
-						$this->gallery[] = ["src" => $url, "title" => $titles[$i]];
+						$this->gallery[$index][] = ["src" => $url, "title" => $titles[$i]];
 					}
 				}
-			}
 
-			$parsed_doc = str_replace("[](".$list_name." \"".$list_title."\")", "", $parsed_doc);
+				$parsed_doc = str_replace("(".$list_name." \"".$list_title."\")", "", $parsed_doc);
+			}
 		}
 
 		$parser = new GithubMarkdown();
 		$content = $parser->parse($parsed_doc);
 
-		preg_match_all('/!g/', $content, $matches_in);
+		preg_match_all('/<p>!g<\/p>/', $content, $matches_in, PREG_OFFSET_CAPTURE);
+
 
 		if( !empty($matches_in[0]) ){
-			$content = str_replace("!g", $this->parseGallery(), $content);
+			$added_length = 0;
+			foreach($matches_in[0] as $index => $match){
+				$gallery = $this->parseGallery($index);
+				$position = $match[1];
+				$length = strlen($match[0]);
+				$total_position = $position + $added_length;
+				$added_length = strlen($gallery) - $length;
+				$content = substr_replace($content, $gallery, $total_position, $length);
+			}
+
 		}
 
 		return $content;
@@ -203,11 +210,11 @@ class Page {
 		return $posts;
 	}
 
-	private function parseGallery(){
+	private function parseGallery($index){
 		$html = '<div class="gallery">';
 			$html .= '<div class="slides-wrapper">';
 				$html .= '<div class="slides">';
-					foreach($this->gallery as $index => $item){
+					foreach($this->gallery[$index] as $item){
 						$html .= '<figure>';
 							$html .= '<img src="'.$item['src'].'" title="'.$item['title'].'">';
 						$html .= '</figure>';
